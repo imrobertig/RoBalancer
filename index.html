@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0d12"><title>RoBalancer — Roblox Game Balance Lab</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-icon">RB</div><div><b>RoBalancer</b><small>GAME BALANCE LAB</small></div></div>
+    <div class="nav-caption">ANALYSIS</div>
+    <button class="nav active" data-tab="dashboard"><span>▦</span> Overview</button>
+    <button class="nav" data-tab="inputs"><span>⌘</span> Game data</button>
+    <button class="nav" data-tab="results"><span>⌁</span> Recommendations</button>
+    <button class="nav" data-tab="method"><span>ⓘ</span> How it works</button>
+    <div class="sidebar-note"><i></i><div><b>Local analysis</b><small>Nothing is uploaded</small></div></div>
+  </aside>
+  <main>
+    <header class="topbar"><div class="breadcrumb">RoBalancer <span>/</span> <b id="crumb">Overview</b></div><div class="topright"><span class="local-pill">LOCAL ONLY</span><button id="reset">Reset demo</button></div></header>
+    <section class="hero">
+      <div><div class="eyebrow"><i></i> ROBLOX ECONOMY ANALYZER</div><h1>Find the grind.<br><em>Fix the balance.</em></h1><p>Model your game's progression, find bottlenecks, and generate concrete tuning suggestions.</p><div class="hero-tags"><span>INCREMENTALS</span><span>SIMULATORS</span><span>TYCOONS</span></div></div>
+      <div class="hero-graphic"><div class="ring r1"></div><div class="ring r2"></div><div class="core">RB</div><span class="glabel gl1">COST</span><span class="glabel gl2">PACING</span><span class="glabel gl3">POWER</span></div>
+    </section>
+    <section class="tab active" id="tab-dashboard">
+      <div class="section-head"><div><small>YOUR CURRENT MODEL</small><h2>Balance overview</h2></div><button class="main-btn" id="analyze">Analyze game <span>↗</span></button></div>
+      <div class="metric-grid">
+        <article class="metric"><div class="metric-top">ESTIMATED FULL RUN <span>◷</span></div><strong id="runTime">—</strong><small>Active earning time in this model</small></article>
+        <article class="metric"><div class="metric-top">BALANCE FLAGS <span>⚑</span></div><strong id="flagCount">—</strong><small>Potential issues detected</small></article>
+        <article class="metric"><div class="metric-top">UPGRADES MODELED <span>▤</span></div><strong id="upgradeCount">—</strong><small>In the progression path</small></article>
+        <article class="metric accent"><div class="metric-top">MODEL HEALTH <span>✳</span></div><strong id="health">—</strong><small id="healthNote">Based on configured rules</small></article>
+      </div>
+      <div class="content-grid">
+        <article class="card graph-card"><div class="card-head"><div><h3>Progression curve</h3><p>Estimated cumulative time by upgrade</p></div><span class="legend"><i></i> Time</span></div><div class="chart-box"><canvas id="chart"></canvas></div><div class="chart-foot"><span>EARLY GAME</span><span>UPGRADE LEVEL</span><span>LATE GAME</span></div></article>
+        <article class="card summary-card"><div class="card-head"><div><h3>Priority findings</h3><p>Most important things to inspect</p></div></div><div id="priorityList" class="priority-list"></div><button class="text-btn" data-goto="results">View all recommendations →</button></article>
+      </div>
+      <article class="card table-card"><div class="card-head"><div><h3>Upgrade timeline</h3><p>Estimated wait before each purchase</p></div><button class="outline-btn" id="export">↓ Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>LEVEL</th><th>COST</th><th>INCOME AFTER</th><th>WAIT</th><th>ASSESSMENT</th></tr></thead><tbody id="rows"></tbody></table></div></article>
+    </section>
+    <section class="tab" id="tab-inputs">
+      <div class="section-head"><div><small>STEP 01 / CONFIGURE</small><h2>Game data</h2></div><span class="muted">Enter values from your game</span></div>
+      <div class="input-layout">
+        <article class="card form-card"><div class="card-head"><div><h3>Economy settings</h3><p>Core progression values</p></div></div>
+          <label>Game name<input id="gameName" value="My Incremental Game" maxlength="70"></label>
+          <div class="two-col"><label>Starting cash<input id="cash" type="number" min="0" value="25"></label><label>Starting income / sec<input id="income" type="number" min="0.01" step="0.1" value="3"></label></div>
+          <div class="two-col"><label>First upgrade cost<input id="cost" type="number" min="1" value="100"></label><label>Upgrade count<input id="count" type="number" min="1" max="100" value="15"></label></div>
+          <div class="two-col"><label>Cost multiplier<input id="costMult" type="number" min="1" max="10" step=".05" value="1.35"></label><label>Income multiplier<input id="incomeMult" type="number" min="1" max="10" step=".05" value="1.25"></label></div>
+          <label>Optional notes<textarea id="notes" rows="3" placeholder="e.g. rebirth at 1M cash, second zone unlocks at level 10..."></textarea></label>
+          <button class="main-btn full" id="saveAnalyze">Save values & analyze <span>↗</span></button>
+          <p class="footnote">Use the average income rate players actually achieve. This model assumes players buy upgrades in order and income stays constant while they earn.</p>
+        </article>
+        <article class="card import-card"><div class="card-head"><div><h3>Import / export model</h3><p>Save your settings or move them between devices</p></div></div>
+          <div class="import-drop"><div class="file-icon">⇧</div><b>Import a RoBalancer JSON</b><p>Load a previously exported settings file.</p><label class="file-label">Choose JSON file<input id="importFile" type="file" accept=".json,application/json"></label></div>
+          <button class="outline-btn wide" id="exportConfig">↓ Export settings JSON</button>
+          <div class="notice"><b>What can it analyze?</b><p>Enter progression values manually for now. RoBalancer does not connect to Roblox or inspect place files automatically in this version.</p></div>
+        </article>
+      </div>
+    </section>
+    <section class="tab" id="tab-results">
+      <div class="section-head"><div><small>STEP 02 / IMPROVE</small><h2>Recommendations</h2></div><button class="outline-btn" id="copyReport">Copy report</button></div>
+      <div id="reportIntro" class="report-intro"></div><div id="recommendations" class="recommendations"></div>
+      <article class="card suggested-card"><div><small>EXPERIMENTAL TUNING</small><h3>Compare a gentler cost curve</h3><p>Preview a lower cost multiplier without overwriting your current settings.</p></div><div class="compare"><label>Test multiplier<input id="testMult" type="number" min="1" max="10" step=".05" value="1.2"></label><button class="main-btn" id="compareBtn">Compare</button></div><div id="compareResult" class="compare-result">Run a comparison to see the estimated time difference.</div></article>
+    </section>
+    <section class="tab" id="tab-method">
+      <div class="section-head"><div><small>TRANSPARENCY</small><h2>How RoBalancer works</h2></div></div>
+      <div class="method-grid">
+        <article class="card method"><span>01</span><h3>Model your progression</h3><p>Enter starting cash, income, first upgrade cost, cost growth, income growth, and upgrade count. The tool creates a linear upgrade path.</p></article>
+        <article class="card method"><span>02</span><h3>Measure bottlenecks</h3><p>It estimates how long each purchase takes and flags slow waits, steep cost growth, and upgrades with little income impact.</p></article>
+        <article class="card method"><span>03</span><h3>Test alternatives</h3><p>Use the multiplier comparison to see how a different cost curve changes modeled progression time before changing your game.</p></article>
+        <article class="card method"><span>04</span><h3>Validate in playtests</h3><p>These are math-based recommendations, not guaranteed retention predictions. Actual fun and player behavior need playtesting.</p></article>
+      </div>
+      <div class="card limitations"><h3>Current limitations</h3><ul><li>No automatic Roblox account or game connection.</li><li>No direct parsing or editing of Roblox Studio place files.</li><li>One linear upgrade path; rebirths, upgrade trees, boosts, offline earnings, and multiple currencies must be modeled separately or added in future versions.</li><li>Recommendations are based on your inputs and transparent rules of thumb.</li></ul></div>
+    </section>
+    <footer><span>RoBalancer <b>·</b> Open-source game balance toolkit</span><span>LOCAL MODEL · RESULTS ARE ESTIMATES</span></footer>
+  </main>
+</div><script src="app.js"></script>
+</body></html>
